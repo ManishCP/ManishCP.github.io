@@ -22,13 +22,14 @@ if (window.gsap && !motionOff) {
     });
   }, {threshold:.08});
   document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
-  const board = document.querySelector('.system-board');
-  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
-    board.addEventListener('pointermove', event => {
-      if (motionOff) return;
-      const rect = board.getBoundingClientRect();
-      gsap.to('.diagram-grid', {x:(event.clientX-rect.left-rect.width/2)*.015,y:(event.clientY-rect.top-rect.height/2)*.025,duration:1});
-    });
-    board.addEventListener('pointerleave', () => gsap.to('.diagram-grid', {x:0,y:0,duration:1}));
-  }
 }
+
+const journeyBoard = document.querySelector('.journey-board');
+let chapter = 0;
+let journeyVisible = false;
+new IntersectionObserver(entries => { journeyVisible = entries[0].isIntersecting; }, {threshold: 0.2}).observe(journeyBoard);
+setInterval(() => {
+  if (motionOff || document.hidden || !journeyVisible) return;
+  chapter = (chapter + 1) % 3;
+  journeyBoard.dataset.chapter = chapter;
+}, 4000);
